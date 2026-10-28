@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@theme {
+  --font-jua: "Jua", cursive, sans-serif;
+  --font-gaegu: "Gaegu", cursive, sans-serif;
+  --font-sans: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #FFFBEB;
+  color: #1F2937;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  overflow-x: hidden;
+}
+
+.font-jua {
+  font-family: var(--font-jua);
+}
+
+.font-gaegu {
+  font-family: var(--font-gaegu);
+}
+
+@keyframes steamRise {
+  0% {
+    transform: translateY(0) scaleX(0.8) scaleY(0.8);
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.75;
+    transform: translateY(-24px) scaleX(1.1) scaleY(1.1) translateX(4px);
+  }
+  100% {
+    transform: translateY(-50px) scaleX(1.4) scaleY(1.3) translateX(-6px);
+    opacity: 0;
+  }
+}
+
+.animate-steam-1 {
+  animation: steamRise 2.4s ease-out infinite;
+}
+
+.animate-steam-2 {
+  animation: steamRise 2.8s ease-out infinite 0.8s;
+}
+
+.animate-steam-3 {
+  animation: steamRise 2.2s ease-out infinite 1.5s;
+}
+
+@keyframes bubblePop {
+  0% {
+    transform: scale(0.6) translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15) translateY(-5px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(0.9) translateY(-10px);
+    opacity: 0;
+  }
+}
+
+.animate-bubble-1 {
+  animation: bubblePop 1.2s ease-in-out infinite;
+}
+
+.animate-bubble-2 {
+  animation: bubblePop 1.5s ease-in-out infinite 0.4s;
+}
+
+.animate-bubble-3 {
+  animation: bubblePop 1.1s ease-in-out infinite 0.7s;
+}
+
+@keyframes potWiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-3deg) scale(0.98); }
+  40% { transform: rotate(3deg) scale(1.02); }
+  60% { transform: rotate(-2deg) scale(0.99); }
+  80% { transform: rotate(2deg) scale(1.01); }
+}
+
+.animate-pot-shake {
+  animation: potWiggle 0.4s ease-in-out;
+}
+
+@keyframes cameraFlash {
+  0% { opacity: 0.95; }
+  100% { opacity: 0; pointer-events: none; }
+}
+
+.animate-flash {
+  animation: cameraFlash 0.65s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+/* Custom cute scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FEF3C7;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #F59E0B;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D97706;
+}

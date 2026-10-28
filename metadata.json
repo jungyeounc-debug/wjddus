@@ -1,0 +1,6 @@
+{
+  "name": "연라면 - 철웅 사장님의 아기자기 라면가게",
+  "description": "귀여운 철웅 사장님이 되어 손님의 취향에 딱 맞게 물 양, 국물, 면 익힘, 토핑을 조리하는 따뜻한 분식집 타이쿤 & 나만의 라면 만들기 게임!",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
