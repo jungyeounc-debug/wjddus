@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { CheolwoongAffinity, DiaryStory } from '../types/game';
 import { soundManager } from '../utils/audio';
 import { CHEOLWOONG_DIARY_STORIES } from '../utils/gameData';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 import { BookOpen, Heart, Lock, Sparkles, X, ChevronRight } from 'lucide-react';
 
 interface MemoryDiaryModalProps {
@@ -108,8 +109,10 @@ export const MemoryDiaryModal: React.FC<MemoryDiaryModalProps> = ({ affinity, on
           {/* Story Content Reader Pane */}
           <div className="md:col-span-2 bg-white/95 rounded-2xl p-5 border-2 border-amber-300 shadow-sm flex flex-col justify-between overflow-y-auto">
             <div>
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-amber-100">
-                <span className="text-2xl">🍜</span>
+              <div className="flex items-center gap-3 mb-2 pb-2 border-b border-amber-100">
+                <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-300 bg-amber-50 shrink-0 flex items-center justify-center p-0.5 shadow-2xs">
+                  <CheolwoongAvatar mood="touched" size="sm" className="w-full h-full object-contain" />
+                </div>
                 <div>
                   <span className="text-xs font-bold text-amber-700">제 {selectedStory.id}장</span>
                   <h3 className="font-jua text-xl text-amber-950">{selectedStory.title}</h3>

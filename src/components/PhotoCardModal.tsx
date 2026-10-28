@@ -8,6 +8,7 @@ import { PhotoCard } from '../types/game';
 import { RamenBowlVisual } from './RamenBowlVisual';
 import { BROTH_LIST, TOPPING_LIST } from '../utils/ramenData';
 import { ToppingVisual } from './ToppingVisual';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 import { soundManager } from '../utils/audio';
 import { Download, Camera, Check, X, Star } from 'lucide-react';
 
@@ -326,7 +327,8 @@ export const PhotoCardModal: React.FC<PhotoCardModalProps> = ({
             <span className="text-[11px] text-slate-400">
               연라면 앨범 등록 완료 ✨
             </span>
-            <div className="font-gaegu text-lg text-amber-800 font-bold flex items-center gap-1">
+            <div className="font-gaegu text-lg text-amber-800 font-bold flex items-center gap-1.5">
+              <CheolwoongAvatar mood="smile" size={24} />
               <span>철웅 사장님</span>
               <span className="text-xs bg-red-100 text-red-600 px-1 rounded-sm border border-red-300">
                 인증

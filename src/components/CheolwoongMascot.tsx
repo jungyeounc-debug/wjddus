@@ -6,6 +6,7 @@
 import React from 'react';
 import { CheolwoongMood } from '../types/game';
 import { soundManager } from '../utils/audio';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 
 interface CheolwoongMascotProps {
   mood?: CheolwoongMood;
@@ -52,35 +53,17 @@ export const CheolwoongMascot: React.FC<CheolwoongMascotProps> = ({
         className="relative group cursor-pointer shrink-0 transition-transform active:scale-95"
         title="철웅 사장님 (클릭해서 목소리 듣기!)"
       >
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-3 border-amber-400 bg-amber-50 shadow-md">
-          {/* Chef Cheol-woong generated portrait */}
-          <img
-            src="/src/assets/images/cheolwoong_mascot_1793179767062.jpg"
-            alt="연라면 철웅 사장님"
-            className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
-            referrerPolicy="no-referrer"
+        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-3 border-amber-400 bg-amber-50/90 shadow-md flex items-center justify-center p-1">
+          {/* Chef Cheol-woong Vector SVG Portrait with dynamic moods */}
+          <CheolwoongAvatar
+            mood={mood}
+            size="lg"
+            className="w-full h-full object-contain"
           />
-
-          {/* Mood Expression Overlays */}
-          {mood === 'happy' && (
-            <div className="absolute inset-0 bg-yellow-400/10 flex items-center justify-center">
-              <span className="text-3xl animate-bounce">🥰</span>
-            </div>
-          )}
-          {mood === 'cheering' && (
-            <div className="absolute inset-0 bg-amber-400/15 flex items-center justify-center">
-              <span className="text-3xl animate-bounce">⭐</span>
-            </div>
-          )}
-          {mood === 'shocked' && (
-            <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
-              <span className="text-3xl animate-pulse">😱</span>
-            </div>
-          )}
         </div>
 
         {/* Name tag pill badge */}
-        <div className="absolute -bottom-2 inset-x-0 mx-auto w-max px-2 py-0.5 bg-amber-600 text-white text-[11px] font-bold rounded-full shadow border border-white flex items-center gap-0.5">
+        <div className="absolute -bottom-2 inset-x-0 mx-auto w-max px-2 py-0.5 bg-amber-600 text-white text-[11px] font-bold rounded-full shadow border border-white flex items-center gap-0.5 z-20">
           <span>철웅 사장</span>
           <span>{moodBadges}</span>
         </div>

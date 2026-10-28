@@ -6,6 +6,7 @@
 import React from 'react';
 import { soundManager } from '../utils/audio';
 import { Coins, Star, Users, ArrowRight, Store, TrendingUp, Receipt } from 'lucide-react';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 
 interface DaySummaryModalProps {
   day: number;
@@ -106,11 +107,11 @@ export const DaySummaryModal: React.FC<DaySummaryModalProps> = ({
 
         {/* Cheol-woong comment bubble */}
         <div className="w-full bg-white/95 border-2 border-amber-200 rounded-2xl p-3 mb-5 text-left flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-400 shrink-0">
-            <img
-              src="/src/assets/images/cheolwoong_mascot_1793179767062.jpg"
-              alt="철웅 사장님"
-              className="w-full h-full object-cover object-top"
+          <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-amber-400 bg-amber-50 shrink-0 flex items-center justify-center p-0.5 shadow-xs">
+            <CheolwoongAvatar
+              mood={leftCount > servedCount ? 'shocked' : perfectCount >= 2 ? 'smile' : servedCount > 0 ? 'normal' : 'pout'}
+              size="sm"
+              className="w-full h-full object-contain"
             />
           </div>
           <div>

@@ -8,6 +8,7 @@ import { CheolwoongAffinity, CheolwoongMood, DialogueChoice, PlayerProfile } fro
 import { soundManager } from '../utils/audio';
 import { CHEF_GOLDEN_TIPS, DAD_JOKES } from '../utils/gameData';
 import { GameStorage } from '../utils/storage';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 import { CheolwoongDialogBox } from './CheolwoongDialogBox';
 import { Heart, Sparkles, X, Coffee, Lightbulb, Smile, History, Gift } from 'lucide-react';
 
@@ -185,8 +186,8 @@ export const CheolwoongChatModal: React.FC<CheolwoongChatModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-amber-300 pb-3 mb-3 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md text-xl">
-              👨‍🍳
+            <div className="w-11 h-11 rounded-2xl bg-amber-100 border-2 border-amber-400 overflow-hidden flex items-center justify-center shadow-md p-0.5">
+              <CheolwoongAvatar mood={currentMood} size="sm" className="w-full h-full object-contain" />
             </div>
             <div>
               <span className="text-[11px] font-bold text-amber-700">철웅 사장님과의 티타임</span>

@@ -5,6 +5,8 @@
 
 import React, { useState } from 'react';
 import { RamenBowlVisual } from './RamenBowlVisual';
+import { RamenShopBackground } from './RamenShopBackground';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 import { soundManager } from '../utils/audio';
 import {
   Play,
@@ -62,16 +64,8 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-between p-3 sm:p-5 overflow-hidden select-none">
-      {/* Background Shop Image with Warm Nostalgic Scrim */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src="/src/assets/images/ramen_shop_bg_1793179766258.jpg"
-          alt="연라면 가게 내부"
-          className="w-full h-full object-cover filter brightness-[0.9] blur-[1px] scale-105"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute inset-0 bg-linear-to-b from-amber-950/75 via-amber-900/60 to-amber-950/85" />
-      </div>
+      {/* Background Shop Illustration with Warm Ambient Ambience */}
+      <RamenShopBackground />
 
       {/* Top Bar Status HUD */}
       <header className="relative z-10 w-full max-w-4xl flex items-center justify-between gap-2 py-2 text-white">
@@ -198,13 +192,8 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
 
           {/* Cheol-woong Mascot Peek Badge */}
           <div className="absolute -right-6 -bottom-2 z-20 flex flex-col items-center">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-3 border-amber-400 bg-white shadow-xl rotate-6 hover:rotate-0 transition-transform">
-              <img
-                src="/src/assets/images/cheolwoong_mascot_1793179767062.jpg"
-                alt="철웅 사장님"
-                className="w-full h-full object-cover object-top"
-                referrerPolicy="no-referrer"
-              />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-3 border-amber-400 bg-amber-50 shadow-xl rotate-6 hover:rotate-0 transition-transform flex items-center justify-center p-1">
+              <CheolwoongAvatar mood="smile" size="lg" className="w-full h-full object-contain" />
             </div>
             <span className="font-jua text-[11px] bg-amber-600 text-white px-2 py-0.5 rounded-full shadow border border-white -mt-2 z-30">
               철웅 사장님 👨‍🍳

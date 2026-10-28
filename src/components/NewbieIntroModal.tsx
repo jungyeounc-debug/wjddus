@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { PlayerProfile } from '../types/game';
 import { soundManager } from '../utils/audio';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 
 interface NewbieIntroModalProps {
   onComplete: (profile: PlayerProfile) => void;
@@ -66,14 +67,10 @@ export const NewbieIntroModal: React.FC<NewbieIntroModalProps> = ({ onComplete }
 
         {/* Cheol-woong Greeting Box */}
         <div className="flex items-center gap-4 bg-white/90 border-2 border-amber-300 rounded-2xl p-4 shadow-sm mb-6">
-          <div className="relative w-20 h-20 shrink-0 rounded-2xl overflow-hidden border-2 border-amber-500 bg-amber-100 shadow">
-            <img
-              src="/src/assets/images/cheolwoong_mascot_1793179767062.jpg"
-              alt="철웅 사장님"
-              className="w-full h-full object-cover object-top"
-            />
-            <span className="absolute bottom-0 inset-x-0 bg-amber-700 text-white text-[10px] font-bold text-center py-0.5">
-              철웅 사장
+          <div className="relative w-20 h-20 shrink-0 rounded-2xl overflow-hidden border-2 border-amber-500 bg-amber-50 shadow flex items-center justify-center p-1">
+            <CheolwoongAvatar mood="smile" size="lg" className="w-full h-full object-contain" />
+            <span className="absolute bottom-0 inset-x-0 bg-amber-700 text-white text-[10px] font-bold text-center py-0.5 z-10">
+              철웅 사장 👨‍🍳
             </span>
           </div>
           <div className="text-left text-sm text-amber-900 leading-relaxed font-medium">

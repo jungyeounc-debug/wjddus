@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CheolwoongMood, DialogueChoice } from '../types/game';
 import { soundManager } from '../utils/audio';
+import { CheolwoongAvatar } from './CheolwoongAvatar';
 
 interface CheolwoongDialogBoxProps {
   mood: CheolwoongMood;
@@ -96,14 +97,14 @@ export const CheolwoongDialogBox: React.FC<CheolwoongDialogBoxProps> = ({
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5">
         {/* Mascot Avatar with Mood Effect */}
         <div className="relative shrink-0 flex items-center gap-2">
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-3 border-amber-500 bg-amber-100 shadow-md">
-            <img
-              src="/src/assets/images/cheolwoong_mascot_1793179767062.jpg"
-              alt="철웅 사장님"
-              className="w-full h-full object-cover object-top"
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-3 border-amber-500 bg-amber-50 shadow-md flex items-center justify-center p-0.5">
+            <CheolwoongAvatar
+              mood={activeMood}
+              size="md"
+              className="w-full h-full object-contain"
             />
             {/* Mood Overlay Icon */}
-            <div className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-white/90 border border-amber-400 flex items-center justify-center text-xs shadow">
+            <div className="absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full bg-white/95 border border-amber-400 flex items-center justify-center text-xs shadow-sm z-10">
               {currentBadge.emoji}
             </div>
           </div>
