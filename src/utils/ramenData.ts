@@ -14,6 +14,7 @@ import {
   ToppingId,
   CookedRamen,
   RamenCategory,
+  NoodleType,
 } from '../types/game';
 
 export const BROTH_LIST: BrothDef[] = [
@@ -372,13 +373,17 @@ export function generateRandomCustomer(day: number, unlockedBroths: string[], un
   const shuffledToppings = [...validToppings].sort(() => 0.5 - Math.random());
   const selectedToppings = shuffledToppings.slice(0, Math.min(toppingCount, shuffledToppings.length));
 
+  // Noodle type selection (randomly selected among all 5 types)
+  const noodleTypes: NoodleType[] = ['basic', 'chewy', 'thin', 'flat', 'udon'];
+  const pickedNoodleType = noodleTypes[Math.floor(Math.random() * noodleTypes.length)];
+
   // Patience decreases as day increases
   const basePatience = pickedArchetype.isCritic ? 30 : Math.max(24, 40 - day * 1.5);
 
   const order: CustomerOrder = {
     category: ramenCategory,
     ramenCategory,
-    noodleType: 'basic',
+    noodleType: pickedNoodleType,
     waterLevel: waterPick,
     broth,
     spicyLevel: 1,
@@ -404,6 +409,14 @@ export function generateRandomCustomer(day: number, unlockedBroths: string[], un
   };
 }
 
+export const NOODLE_TYPE_NAMES: Record<NoodleType, string> = {
+  basic: '기본면',
+  chewy: '쫄깃면',
+  thin: '얇은면',
+  flat: '넓적면',
+  udon: '우동면',
+};
+
 // Convert order to cute spoken request sentence
 export function formatOrderToSpeech(order: CustomerOrder): string {
   const isStir = order.ramenCategory === 'stir';
@@ -424,10 +437,12 @@ export function formatOrderToSpeech(order: CustomerOrder): string {
   const brothName = brothObj ? brothObj.name : '기본';
 
   const noodleMap: Record<string, string> = {
-    firm: '면은 꼬들꼬들하게',
-    normal: '면은 적당히 탱글하게',
-    soft: '면은 부드럽게 푹',
+    firm: '꼬들꼬들하게',
+    normal: '적당히 탱글하게',
+    soft: '부드럽게 푹',
   };
+
+  const noodleTypeName = NOODLE_TYPE_NAMES[order.noodleType || 'basic'] || '기본면';
 
   const toppingNames = order.toppings
     .map((tid) => TOPPING_LIST.find((t) => t.id === tid)?.name || tid)
@@ -438,7 +453,7 @@ export function formatOrderToSpeech(order: CustomerOrder): string {
   const categoryIntro = isStir ? '오늘은 국물 말고 볶음면으로 먹을래요!' : '오늘은 뜨끈한 국물라면으로 주세요!';
 
   const noodleKey = order.noodle || order.noodleDoneness || 'normal';
-  return `"${categoryIntro} [${brothName} 소스]에 ${waterMap[order.waterLevel]} 해주시고, ${noodleMap[noodleKey]} 익혀주세요. ${toppingPart}"`;
+  return `"${categoryIntro} [${brothName} 소스]에 ${waterMap[order.waterLevel]} 해주시고, 면은 [${noodleTypeName}]으로 ${noodleMap[noodleKey]} 익혀주세요. ${toppingPart}"`;
 }
 
 // Chef's Golden Hint Generator for achieving 5 stars
@@ -446,6 +461,7 @@ export function getChefHint(customer: Customer): string {
   const o = customer.order;
   const isStir = o.ramenCategory === 'stir';
   const brothObj = BROTH_LIST.find((b) => b.id === o.broth);
+  const noodleTypeName = NOODLE_TYPE_NAMES[o.noodleType || 'basic'] || '기본면';
 
   const waterHint = isStir
     ? o.waterLevel === 'less'
@@ -461,24 +477,25 @@ export function getChefHint(customer: Customer): string {
 
   const noodleHint =
     o.noodle === 'firm'
-      ? '꼬들면: 게이지 20~40%에서 정지!'
+      ? '꼬들면: 타이머 앞쪽에서 정지!'
       : o.noodle === 'normal'
-      ? '보통면: 게이지 45~70%에서 정지!'
-      : '퍼진면: 게이지 75% 이상에서 정지!';
+      ? '보통면: 초록 게이지에서 정지!'
+      : '퍼진면: 타이머 뒤쪽에서 정지!';
 
   const toppingHint =
     o.toppings.length > 0
       ? `필수 토핑: [${o.toppings.map((t) => TOPPING_LIST.find((x) => x.id === t)?.name).join(', ')}]만 얹기!`
       : '토핑을 넣지 마세요!';
 
-  return `👨‍🍳 철웅의 황금팁: [${isStir ? '볶음면' : '국물라면'}] + [${brothObj?.name}] + [${waterHint}] + [${noodleHint}] + [${toppingHint}]`;
+  return `👨‍🍳 철웅의 황금팁: [${isStir ? '볶음면' : '국물라면'}] + [${brothObj?.name}] + [${noodleTypeName}] + [${waterHint}] + [${noodleHint}] + [${toppingHint}]`;
 }
 
 // Generate fun auto-title for cooked ramen
 export function generateRamenTitle(ramen: CookedRamen): string {
   const isStir = ramen.ramenCategory === 'stir';
   const brothObj = BROTH_LIST.find((b) => b.id === ramen.broth);
-  const brothName = brothObj?.name || (isStir ? '짜장볶음' : '라면');
+  const brothName = brothObj?.name || (isStir ? '짜장' : '라면');
+  const noodleTypeName = NOODLE_TYPE_NAMES[ramen.noodleType || 'basic'] || '기본면';
 
   const noodleAdj: Record<string, string> = {
     firm: '꼬들',
@@ -500,54 +517,77 @@ export function generateRamenTitle(ramen: CookedRamen): string {
 
   const noodleKey = ramen.noodle || ramen.noodleDoneness || 'normal';
   const waterKey = ramen.waterLevel || 'normal';
+  const suffix = isStir ? '면' : '라면';
 
   // Primary topping
   if (ramen.toppings.length === 0) {
-    return isStir
-      ? `${waterAdj[waterKey]} ${noodleAdj[noodleKey]} ${brothName}면`
-      : `${waterAdj[waterKey]} ${noodleAdj[noodleKey]} ${brothName}라면`;
+    return `${waterAdj[waterKey]} ${noodleAdj[noodleKey]} ${noodleTypeName} ${brothName}${suffix}`;
   }
 
   const firstToppingObj = TOPPING_LIST.find((t) => t.id === ramen.toppings[0]);
   const toppingName = firstToppingObj ? firstToppingObj.name : '특제';
 
   if (ramen.toppings.length >= 3) {
-    return isStir
-      ? `모둠 토핑 폭탄 ${noodleAdj[noodleKey]} ${brothName}면`
-      : `모둠 토핑 폭탄 ${noodleAdj[noodleKey]} ${brothName}라면`;
+    return `모둠 토핑 폭탄 ${noodleAdj[noodleKey]} ${noodleTypeName} ${brothName}${suffix}`;
   }
 
-  return isStir
-    ? `${toppingName} 듬뿍 ${noodleAdj[noodleKey]} ${brothName}면`
-    : `${toppingName} 듬뿍 ${noodleAdj[noodleKey]} ${brothName}라면`;
+  return `${toppingName} 듬뿍 ${noodleAdj[noodleKey]} ${noodleTypeName} ${brothName}${suffix}`;
 }
 
 // Calculate Rating
 export function evaluateRamen(cooked: CookedRamen, customer: Customer, decorBonuses: string[] = []): RamenRating {
   const target = customer.order;
   let score = 0;
+  const deductions: string[] = [];
 
   // 1. Category check (국물라면 vs 볶음면) - 20 pts
   const categoryMatched = cooked.ramenCategory === target.ramenCategory;
-  if (categoryMatched) score += 20;
-  else score += 0;
+  if (categoryMatched) {
+    score += 20;
+  } else {
+    score += 0;
+    deductions.push('라면 스타일(국물/볶음)이 달라요');
+  }
 
   // 2. Water check (20 pts)
   const waterMatched = cooked.waterLevel === target.waterLevel;
-  if (waterMatched) score += 20;
-  else score += 5;
+  if (waterMatched) {
+    score += 20;
+  } else {
+    score += 5;
+    deductions.push('물 조절이 아쉬워요');
+  }
 
   // 3. Broth check (25 pts)
   const brothMatched = cooked.broth === target.broth;
-  if (brothMatched) score += 25;
-  else score += 5;
+  if (brothMatched) {
+    score += 25;
+  } else {
+    score += 5;
+    deductions.push('국물/소스 종류가 달라요');
+  }
 
-  // 4. Noodle check (20 pts)
-  const noodleMatched = cooked.noodle === target.noodle;
-  if (noodleMatched) score += 20;
-  else score += 8;
+  // 4. Noodle doneness check (15 pts)
+  const noodleMatched = (cooked.noodle || cooked.noodleDoneness) === (target.noodle || target.noodleDoneness);
+  if (noodleMatched) {
+    score += 15;
+  } else {
+    score += 5;
+    deductions.push('면 익힘 정도가 달라요');
+  }
 
-  // 5. Toppings check (15 pts)
+  // 5. Noodle Type check (면발 종류: 기본면, 쫄깃면, 얇은면, 넓적면, 우동면) - 20 pts
+  const targetNoodleType = target.noodleType || 'basic';
+  const cookedNoodleType = cooked.noodleType || 'basic';
+  const noodleTypeMatched = targetNoodleType === cookedNoodleType;
+  if (noodleTypeMatched) {
+    score += 20;
+  } else {
+    score += 0;
+    deductions.push(`면 종류가 달라요 -1점 (주문: ${NOODLE_TYPE_NAMES[targetNoodleType]} / 조리: ${NOODLE_TYPE_NAMES[cookedNoodleType]})`);
+  }
+
+  // 6. Toppings check (15 pts)
   const targetToppingSet = new Set(target.toppings);
   const cookedToppingSet = new Set(cooked.toppings);
 
@@ -571,6 +611,13 @@ export function evaluateRamen(cooked: CookedRamen, customer: Customer, decorBonu
     }
   });
 
+  if (missingToppings.length > 0) {
+    deductions.push(`빠진 토핑: ${missingToppings.join(', ')}`);
+  }
+  if (wrongToppings.length > 0) {
+    deductions.push(`주문하지 않은 토핑: ${wrongToppings.join(', ')}`);
+  }
+
   let toppingScoreRatio = 1;
   if (target.toppings.length > 0) {
     toppingScoreRatio = matchedToppingsCount / target.toppings.length;
@@ -588,6 +635,11 @@ export function evaluateRamen(cooked: CookedRamen, customer: Customer, decorBonu
   else if (score >= 65) stars = 3;
   else if (score >= 45) stars = 2;
   else stars = 1;
+
+  // If noodle type did not match, deduct 1 star as requested
+  if (!noodleTypeMatched) {
+    stars = Math.max(1, stars - 1);
+  }
 
   // Base coins
   let baseCoins = stars * 16 + Math.floor(Math.random() * 6);
@@ -625,11 +677,15 @@ export function evaluateRamen(cooked: CookedRamen, customer: Customer, decorBonu
     feedback,
     earnedCoins: baseCoins,
     isCriticBonus,
+    deductions,
     details: {
       categoryMatched,
       waterMatched,
       brothMatched,
       noodleMatched,
+      noodleTypeMatched,
+      targetNoodleType,
+      cookedNoodleType,
       toppingScore: Math.round(toppingScoreRatio * 100),
       missingToppings,
       wrongToppings,

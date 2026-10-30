@@ -246,12 +246,74 @@ export const TOPPING_LIST: ToppingDef[] = [
 ];
 
 // 3. 면 종류
-export const NOODLE_TYPES: { id: NoodleType; name: string; emoji: string; desc: string }[] = [
-  { id: 'basic', name: '기본 면발', emoji: '🍜', desc: '가장 익숙하고 맛있는 만능 라면 면발' },
-  { id: 'chewy', name: '쫄깃 굵은면', emoji: '🥢', desc: '탱글탱글 씹는 맛이 살아있는 도톰한 면' },
-  { id: 'thin', name: '호로록 얇은면', emoji: '🍲', desc: '국물이 쏙쏙 잘 배어드는 얇은 면' },
-  { id: 'flat', name: '넓적 당면/면', emoji: '🥓', desc: '로제와 마라에 찰떡인 넓적한 면' },
-  { id: 'udon', name: '통통 우동면', emoji: '🥣', desc: '포동포동 부드럽고 든든한 우동 면발' },
+export interface NoodleTypeDef {
+  id: NoodleType;
+  name: string;
+  shortName: string;
+  emoji: string;
+  desc: string;
+  speedDesc: string;
+  cookDurationMultiplier: number;
+  greenZone: { firmMax: number; normalMax: number };
+  colorHex: string;
+}
+
+export const NOODLE_TYPES: NoodleTypeDef[] = [
+  {
+    id: 'basic',
+    name: '기본면',
+    shortName: '기본면',
+    emoji: '🍜',
+    desc: '기본면 · 표준적인 조리시간',
+    speedDesc: '표준 조리',
+    cookDurationMultiplier: 1.0,
+    greenZone: { firmMax: 42, normalMax: 76 },
+    colorHex: '#FDE047',
+  },
+  {
+    id: 'chewy',
+    name: '쫄깃면',
+    shortName: '쫄깃면',
+    emoji: '🥢',
+    desc: '쫄깃면 · 조금 천천히 익어요, 탄력만점!',
+    speedDesc: '조금 느림 (탄력)',
+    cookDurationMultiplier: 1.2,
+    greenZone: { firmMax: 45, normalMax: 78 },
+    colorHex: '#F59E0B',
+  },
+  {
+    id: 'thin',
+    name: '얇은면',
+    shortName: '얇은면',
+    emoji: '🍲',
+    desc: '얇은면 · 가장 빨리 익어요, 호로록!',
+    speedDesc: '가장 빠름 ⚡',
+    cookDurationMultiplier: 0.72,
+    greenZone: { firmMax: 35, normalMax: 68 },
+    colorHex: '#FEF9C3',
+  },
+  {
+    id: 'flat',
+    name: '넓적면',
+    shortName: '넓적면',
+    emoji: '🥓',
+    desc: '넓적면 · 조금 천천히 익어요, 쫀득식감!',
+    speedDesc: '조금 느림 (쫀득)',
+    cookDurationMultiplier: 1.2,
+    greenZone: { firmMax: 45, normalMax: 78 },
+    colorHex: '#FDE68A',
+  },
+  {
+    id: 'udon',
+    name: '우동면',
+    shortName: '우동면',
+    emoji: '🥣',
+    desc: '우동면 · 가장 천천히 익어요, 든든함!',
+    speedDesc: '가장 느림 ⏳',
+    cookDurationMultiplier: 1.55,
+    greenZone: { firmMax: 50, normalMax: 82 },
+    colorHex: '#FFFBEB',
+  },
 ];
 
 // 4. 그릇 꾸미기 세부 옵션

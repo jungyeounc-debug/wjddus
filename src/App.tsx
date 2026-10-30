@@ -593,8 +593,36 @@ export default function App() {
             </h3>
 
             {/* Customer Quote */}
-            <div className="bg-white/90 border border-amber-200 rounded-2xl p-3 my-3 text-xs sm:text-sm text-slate-800 font-medium">
+            <div className="bg-white/90 border border-amber-200 rounded-2xl p-3 my-2 text-xs sm:text-sm text-slate-800 font-medium w-full">
               "{lastRating.rating.feedback}"
+            </div>
+
+            {/* 이번 라면 평가 (Evaluation Breakdown) */}
+            <div className="w-full bg-amber-50/90 border border-amber-300 rounded-2xl p-3 my-1.5 text-left text-xs">
+              <div className="font-bold text-amber-950 flex items-center justify-between mb-1 pb-1 border-b border-amber-200">
+                <span>📋 이번 라면 평가</span>
+                <span className="text-[11px] font-semibold text-amber-800">
+                  일치도 {lastRating.rating.scorePercent}점
+                </span>
+              </div>
+              {lastRating.rating.deductions && lastRating.rating.deductions.length > 0 ? (
+                <div className="space-y-1 mt-1.5">
+                  {lastRating.rating.deductions.map((d: string, idx: number) => (
+                    <div
+                      key={idx}
+                      className="text-red-700 bg-red-50 border border-red-200 rounded-lg px-2 py-1 font-semibold flex items-center gap-1.5 text-[11px]"
+                    >
+                      <span>⚠️</span>
+                      <span>{d}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-emerald-700 font-bold text-[11px] py-1 flex items-center gap-1">
+                  <span>✨</span>
+                  <span>면 종류와 물, 소스, 토핑까지 주문과 100% 일치합니다!</span>
+                </div>
+              )}
             </div>
 
             {/* Earned Coins */}

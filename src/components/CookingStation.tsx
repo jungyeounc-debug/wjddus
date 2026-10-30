@@ -122,9 +122,10 @@ export const CookingStation: React.FC<CookingStationProps> = ({
     setBoilProgress(0);
     setBoilFinished(false);
 
-    // Speed depends on flame level
-    const speedMult = flameLevel === 'high' ? 1.5 : flameLevel === 'low' ? 0.7 : 1.0;
-    const duration = 6500 / speedMult;
+    // Speed depends on flame level and noodle type (얇은면 가장 빠름, 우동면 가장 느림)
+    const noodleDef = NOODLE_TYPES.find((n) => n.id === noodleType) || NOODLE_TYPES[0];
+    const flameMult = flameLevel === 'high' ? 1.5 : flameLevel === 'low' ? 0.7 : 1.0;
+    const duration = (6500 * noodleDef.cookDurationMultiplier) / flameMult;
     const startTime = Date.now();
 
     if (boilIntervalRef.current) clearInterval(boilIntervalRef.current);
@@ -160,9 +161,10 @@ export const CookingStation: React.FC<CookingStationProps> = ({
     setBoilFinished(true);
     soundManager.playTimerDing();
 
-    if (boilProgress < 42) {
+    const noodleDef = NOODLE_TYPES.find((n) => n.id === noodleType) || NOODLE_TYPES[0];
+    if (boilProgress < noodleDef.greenZone.firmMax) {
       setNoodleDoneness('firm');
-    } else if (boilProgress < 76) {
+    } else if (boilProgress <= noodleDef.greenZone.normalMax) {
       setNoodleDoneness('normal');
     } else {
       setNoodleDoneness('soft');
@@ -339,6 +341,7 @@ export const CookingStation: React.FC<CookingStationProps> = ({
           <div className={`transition-transform my-auto ${isShaking ? 'animate-pot-shake' : ''}`}>
             <RamenBowlVisual
               ramenCategory={ramenCategory}
+              noodleType={noodleType}
               waterLevel={waterLevel}
               broth={broth}
               spicyLevel={spicyLevel}
@@ -400,27 +403,84 @@ export const CookingStation: React.FC<CookingStationProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-amber-900 mb-1.5">
-                  🥢 2. 면발 종류 선택
+                <label className="block text-xs font-bold text-amber-900 mb-1.5 flex items-center justify-between">
+                  <span>🥢 2. 면발 종류 선택 (모양과 조리 시간이 달라요!)</span>
+                  <span className="text-[11px] font-semibold text-amber-700">
+                    현재 선택: {NOODLE_TYPES.find((n) => n.id === noodleType)?.name}
+                  </span>
                 </label>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
-                  {NOODLE_TYPES.map((nt) => (
-                    <button
-                      key={nt.id}
-                      onClick={() => {
-                        soundManager.playClick();
-                        setNoodleType(nt.id);
-                      }}
-                      className={`p-2 rounded-xl border-2 text-center transition cursor-pointer ${
-                        noodleType === nt.id
-                          ? 'border-amber-500 bg-amber-100 font-bold text-amber-950 shadow-xs'
-                          : 'border-slate-200 hover:bg-amber-50 bg-white text-slate-700'
-                      }`}
-                    >
-                      <span className="text-xl block">{nt.emoji}</span>
-                      <span className="font-jua text-xs block mt-0.5">{nt.name}</span>
-                    </button>
-                  ))}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {NOODLE_TYPES.map((nt) => {
+                    const isSelected = noodleType === nt.id;
+                    return (
+                      <button
+                        key={nt.id}
+                        onClick={() => {
+                          soundManager.playClick();
+                          setNoodleType(nt.id);
+                        }}
+                        className={`p-2 rounded-xl border-2 text-center transition cursor-pointer flex flex-col items-center justify-between min-h-[92px] ${
+                          isSelected
+                            ? 'border-amber-500 bg-amber-100 font-bold text-amber-950 shadow-md ring-2 ring-amber-300'
+                            : 'border-slate-200 hover:border-amber-300 hover:bg-amber-50/50 bg-white text-slate-700'
+                        }`}
+                      >
+                        {/* Mini Vector Noodle Diagram */}
+                        <div className="w-14 h-8 rounded-lg bg-amber-50 border border-amber-200/80 flex items-center justify-center overflow-hidden mb-1 shadow-2xs">
+                          {nt.id === 'basic' && (
+                            <svg className="w-12 h-6" viewBox="0 0 40 20">
+                              <path d="M4,7 Q10,2 16,7 T28,7 T36,9" fill="none" stroke="#FDE047" strokeWidth="2.4" strokeLinecap="round" />
+                              <path d="M4,13 Q10,8 16,13 T28,13 T36,15" fill="none" stroke="#EAB308" strokeWidth="2.2" strokeLinecap="round" />
+                            </svg>
+                          )}
+                          {nt.id === 'chewy' && (
+                            <svg className="w-12 h-6" viewBox="0 0 40 20">
+                              <path d="M4,10 Q12,2 20,10 T36,10" fill="none" stroke="#D97706" strokeWidth="3.6" strokeLinecap="round" />
+                              <path d="M4,10 Q12,2 20,10 T36,10" fill="none" stroke="#F59E0B" strokeWidth="3.0" strokeLinecap="round" />
+                              <path d="M6,9 Q12,3 18,9 T34,9" fill="none" stroke="#FEF9C3" strokeWidth="1.2" strokeLinecap="round" />
+                            </svg>
+                          )}
+                          {nt.id === 'thin' && (
+                            <svg className="w-12 h-6" viewBox="0 0 40 20">
+                              <path d="M3,5 Q7,2 11,5 T19,5 T27,5 T35,5" fill="none" stroke="#FEF9C3" strokeWidth="1.2" strokeLinecap="round" />
+                              <path d="M3,9 Q7,6 11,9 T19,9 T27,9 T35,9" fill="none" stroke="#FDE047" strokeWidth="1.2" strokeLinecap="round" />
+                              <path d="M3,13 Q7,10 11,13 T19,13 T27,13 T35,13" fill="none" stroke="#FEF08A" strokeWidth="1.2" strokeLinecap="round" />
+                              <path d="M3,17 Q7,14 11,17 T19,17 T27,17 T35,17" fill="none" stroke="#FDE047" strokeWidth="1.2" strokeLinecap="round" />
+                            </svg>
+                          )}
+                          {nt.id === 'flat' && (
+                            <svg className="w-12 h-6" viewBox="0 0 40 20">
+                              <path d="M4,7 Q20,3 36,9" fill="none" stroke="#F59E0B" strokeWidth="5.5" strokeLinecap="square" />
+                              <path d="M4,7 Q20,3 36,9" fill="none" stroke="#FDE68A" strokeWidth="4.2" strokeLinecap="square" />
+                              <path d="M4,14 Q20,18 36,12" fill="none" stroke="#F59E0B" strokeWidth="5.5" strokeLinecap="square" />
+                              <path d="M4,14 Q20,18 36,12" fill="none" stroke="#FDE68A" strokeWidth="4.2" strokeLinecap="square" />
+                            </svg>
+                          )}
+                          {nt.id === 'udon' && (
+                            <svg className="w-12 h-6" viewBox="0 0 40 20">
+                              <path d="M4,6 C14,4 26,8 36,6" fill="none" stroke="#FDE68A" strokeWidth="6.0" strokeLinecap="round" />
+                              <path d="M4,6 C14,4 26,8 36,6" fill="none" stroke="#FFFBEB" strokeWidth="5.0" strokeLinecap="round" />
+                              <path d="M5,5 C14,3 26,7 35,5" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" />
+                              <path d="M4,15 C14,13 26,17 36,14" fill="none" stroke="#FDE68A" strokeWidth="6.0" strokeLinecap="round" />
+                              <path d="M4,15 C14,13 26,17 36,14" fill="none" stroke="#FFFBEB" strokeWidth="5.0" strokeLinecap="round" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="font-jua text-xs block">{nt.name}</span>
+                        <span className="text-[9px] text-amber-900 bg-amber-50 border border-amber-300/80 px-1.5 py-0.5 rounded-full mt-1 leading-tight font-medium">
+                          {nt.id === 'thin'
+                            ? '얇은면 · 빨리 익어요'
+                            : nt.id === 'basic'
+                            ? '기본면 · 표준 조리'
+                            : nt.id === 'chewy'
+                            ? '쫄깃면 · 탄력 만점'
+                            : nt.id === 'flat'
+                            ? '넓적면 · 쫀득 식감'
+                            : '우동면 · 천천히 익음'}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -508,75 +568,102 @@ export const CookingStation: React.FC<CookingStationProps> = ({
           )}
 
           {/* STEP 3: Noodle Boiling & Cold Rinse */}
-          {currentStep === 3 && (
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-amber-900 flex items-center gap-1">
-                    <Timer className="w-4 h-4 text-amber-600" />
-                    <span>면 익히기 타이머 게이지</span>
-                  </label>
-                  <span className="text-xs font-black text-amber-900">
-                    현재: {noodleDoneness === 'firm' ? '꼬들꼬들 💛' : noodleDoneness === 'normal' ? '보통 탱글 💚' : '푹 퍼짐 💙'}
-                  </span>
-                </div>
-
-                {/* Doneness Progress Gauge */}
-                <div className="relative w-full h-8 bg-slate-200 rounded-full border-2 border-slate-300 overflow-hidden shadow-inner flex items-center">
-                  <div
-                    className="h-full bg-linear-to-r from-amber-400 via-emerald-400 to-blue-400 transition-all duration-75"
-                    style={{ width: `${boilProgress}%` }}
-                  />
-                  {/* Gauge marker indicators */}
-                  <div className="absolute inset-0 flex text-[10px] font-bold text-slate-700 pointer-events-none items-center justify-between px-3">
-                    <span>꼬들 (0~42%)</span>
-                    <span>보통 (43~76%)</span>
-                    <span>퍼짐 (77~100%)</span>
+          {currentStep === 3 && (() => {
+            const curNoodleDef = NOODLE_TYPES.find((n) => n.id === noodleType) || NOODLE_TYPES[0];
+            return (
+              <div className="space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-amber-900 flex items-center gap-1">
+                      <Timer className="w-4 h-4 text-amber-600" />
+                      <span>{curNoodleDef.name} 익히기 게이지</span>
+                    </label>
+                    <span className="text-xs font-black text-amber-900">
+                      현재: {noodleDoneness === 'firm' ? '꼬들꼬들 💛' : noodleDoneness === 'normal' ? '보통 탱글 💚' : '푹 퍼짐 💙'}
+                    </span>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-center gap-3 mt-3">
-                  {!isBoiling ? (
-                    <button
-                      onClick={startBoiling}
-                      className="py-2.5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-jua text-sm shadow-md transition active:scale-95 flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Flame className="w-4 h-4" />
-                      <span>{boilFinished ? '다시 끓이기' : '불 켜고 면 삶기!'}</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={stopBoiling}
-                      className="py-2.5 px-6 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-jua text-sm shadow-lg transition active:scale-95 animate-pulse flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <span>🛑 지금 건져내기! (스톱)</span>
-                    </button>
-                  )}
-                </div>
-              </div>
+                  {/* Noodle characteristic speed badge */}
+                  <div className="flex items-center justify-between text-[11px] bg-amber-50 border border-amber-300 rounded-xl px-2.5 py-1 mb-2 shadow-2xs">
+                    <span className="font-bold text-amber-950 flex items-center gap-1">
+                      <span>🍜</span>
+                      <span>{curNoodleDef.name}</span>
+                      <span className="text-[10px] text-amber-800 font-semibold bg-white px-1.5 py-0.2 rounded border border-amber-200">
+                        {curNoodleDef.speedDesc}
+                      </span>
+                    </span>
+                    <span className="text-emerald-800 font-bold">
+                      초록 목표 구간: {curNoodleDef.greenZone.firmMax + 1}% ~ {curNoodleDef.greenZone.normalMax}%
+                    </span>
+                  </div>
 
-              {/* Bibim Cold Rinse Mini-game */}
-              {ramenCategory === 'bibim' && (
-                <div className="bg-sky-50 border-2 border-sky-300 rounded-2xl p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Snowflake className="w-5 h-5 text-sky-500" />
-                    <div>
-                      <h4 className="font-jua text-xs text-sky-950">
-                        찬물 헹구기 ({rinseCount}/5회 완료)
-                      </h4>
-                      <p className="text-[10px] text-sky-700">연타해서 찰기를 살리세요!</p>
+                  {/* Doneness Progress Gauge */}
+                  <div className="relative w-full h-8 bg-slate-200 rounded-full border-2 border-slate-300 overflow-hidden shadow-inner flex items-center">
+                    {/* Dynamic green zone marker */}
+                    <div
+                      className="absolute top-0 bottom-0 bg-emerald-400/35 border-x-2 border-emerald-500/70 z-5"
+                      style={{
+                        left: `${curNoodleDef.greenZone.firmMax}%`,
+                        width: `${curNoodleDef.greenZone.normalMax - curNoodleDef.greenZone.firmMax}%`,
+                      }}
+                    />
+
+                    <div
+                      className="h-full bg-linear-to-r from-amber-400 via-emerald-400 to-blue-400 transition-all duration-75 relative z-10"
+                      style={{ width: `${boilProgress}%` }}
+                    />
+
+                    {/* Gauge marker indicators */}
+                    <div className="absolute inset-0 flex text-[10px] font-bold text-slate-800 pointer-events-none items-center justify-between px-3 z-20">
+                      <span>꼬들 (0~{curNoodleDef.greenZone.firmMax}%)</span>
+                      <span className="font-black text-emerald-950">보통/완벽 ({curNoodleDef.greenZone.firmMax + 1}~{curNoodleDef.greenZone.normalMax}%)</span>
+                      <span>퍼짐 ({curNoodleDef.greenZone.normalMax + 1}~100%)</span>
                     </div>
                   </div>
-                  <button
-                    onClick={handleColdRinse}
-                    className="py-1.5 px-3.5 bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs rounded-xl shadow transition active:scale-90 cursor-pointer"
-                  >
-                    찬물 헹구기 촥!
-                  </button>
+
+                  <div className="flex items-center justify-center gap-3 mt-3">
+                    {!isBoiling ? (
+                      <button
+                        onClick={startBoiling}
+                        className="py-2.5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-jua text-sm shadow-md transition active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Flame className="w-4 h-4" />
+                        <span>{boilFinished ? '다시 끓이기' : '불 켜고 면 삶기!'}</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={stopBoiling}
+                        className="py-2.5 px-6 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-jua text-sm shadow-lg transition active:scale-95 animate-pulse flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>🛑 지금 건져내기! (스톱)</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-          )}
+
+                {/* Bibim Cold Rinse Mini-game */}
+                {ramenCategory === 'bibim' && (
+                  <div className="bg-sky-50 border-2 border-sky-300 rounded-2xl p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Snowflake className="w-5 h-5 text-sky-500" />
+                      <div>
+                        <h4 className="font-jua text-xs text-sky-950">
+                          찬물 헹구기 ({rinseCount}/5회 완료)
+                        </h4>
+                        <p className="text-[10px] text-sky-700">연타해서 찰기를 살리세요!</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleColdRinse}
+                      className="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-jua shadow transition active:scale-90 cursor-pointer"
+                    >
+                      촥촥 헹구기!
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* STEP 4: Broth & Sauce + Spicy Clicker */}
           {currentStep === 4 && (

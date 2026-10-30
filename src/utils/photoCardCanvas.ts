@@ -267,11 +267,15 @@ function drawRamenBowlOnCanvas(
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.28)';
   ctx.stroke();
 
-  // 6. Curvy Noodle Strands (구불구불한 라면 면발)
-  const isJjajang = ramen.broth === 'stir_jjajang' || ramen.broth === 'jjajang_classic';
-  const noodleMainColor = isJjajang ? '#4E342E' : '#FDE047';
-  const noodleShadowColor = isJjajang ? '#27140B' : '#D97706';
-  const noodleWidth = ramen.noodle === 'soft' ? 7 : ramen.noodle === 'firm' ? 4.5 : 5.5;
+  // 6. Distinct Noodle Strands (면 종류별 맞춤 2D 캔버스 렌더링)
+  const noodleType = ramen.noodleType || 'basic';
+  const isJjajang =
+    ramen.broth === 'stir_jjajang' ||
+    ramen.broth === 'jjajang_classic' ||
+    ramen.broth === 'jjajang_truffle';
+  const isSoft = ramen.noodle === 'soft';
+  const isFirm = ramen.noodle === 'firm';
+  const sag = isSoft ? 8 : isFirm ? -3 : 0;
 
   ctx.save();
   ctx.beginPath();
@@ -289,33 +293,193 @@ function drawRamenBowlOnCanvas(
     y1: number;
   }
 
-  const noodleCurves: NoodleCurve[] = [
-    { x0: centerX - 80, y0: centerY - 45, cp1x: centerX - 50, cp1y: centerY - 70, cp2x: centerX + 20, cp2y: centerY - 20, x1: centerX + 75, y1: centerY - 40 },
-    { x0: centerX - 90, y0: centerY - 15, cp1x: centerX - 30, cp1y: centerY + 10, cp2x: centerX + 40, cp2y: centerY - 45, x1: centerX + 85, y1: centerY - 10 },
-    { x0: centerX - 75, y0: centerY + 15, cp1x: centerX - 40, cp1y: centerY + 45, cp2x: centerX + 30, cp2y: centerY - 10, x1: centerX + 80, y1: centerY + 25 },
-    { x0: centerX - 60, y0: centerY + 45, cp1x: centerX - 20, cp1y: centerY + 70, cp2x: centerX + 50, cp2y: centerY + 20, x1: centerX + 70, y1: centerY + 55 },
-    { x0: centerX - 35, y0: centerY - 80, cp1x: centerX - 60, cp1y: centerY - 20, cp2x: centerX - 10, cp2y: centerY + 60, x1: centerX - 40, y1: centerY + 80 },
-    { x0: centerX + 30, y0: centerY - 75, cp1x: centerX + 60, cp1y: centerY - 10, cp2x: centerX + 15, cp2y: centerY + 50, x1: centerX + 35, y1: centerY + 75 },
-  ];
+  if (noodleType === 'thin') {
+    // [얇은면] 연한 노란색, 아주 가늘고 촘촘한 곡선을 많이
+    const nWidth = isSoft ? 5.0 : isFirm ? 2.5 : 3.5;
+    const thinCurves: NoodleCurve[] = [
+      { x0: centerX - 110, y0: centerY - 65 + sag, cp1x: centerX - 60, cp1y: centerY - 95 + sag, cp2x: centerX + 40, cp2y: centerY - 45 + sag, x1: centerX + 105, y1: centerY - 70 + sag },
+      { x0: centerX - 120, y0: centerY - 45 + sag, cp1x: centerX - 50, cp1y: centerY - 25 + sag, cp2x: centerX + 30, cp2y: centerY - 65 + sag, x1: centerX + 115, y1: centerY - 40 + sag },
+      { x0: centerX - 125, y0: centerY - 25 + sag, cp1x: centerX - 70, cp1y: centerY - 5 + sag, cp2x: centerX + 50, cp2y: centerY - 35 + sag, x1: centerX + 120, y1: centerY - 15 + sag },
+      { x0: centerX - 120, y0: centerY - 5 + sag, cp1x: centerX - 40, cp1y: centerY + 25 + sag, cp2x: centerX + 40, cp2y: centerY - 15 + sag, x1: centerX + 115, y1: centerY + 10 + sag },
+      { x0: centerX - 115, y0: centerY + 15 + sag, cp1x: centerX - 60, cp1y: centerY + 45 + sag, cp2x: centerX + 30, cp2y: centerY + 5 + sag, x1: centerX + 110, y1: centerY + 30 + sag },
+      { x0: centerX - 110, y0: centerY + 35 + sag, cp1x: centerX - 40, cp1y: centerY + 65 + sag, cp2x: centerX + 50, cp2y: centerY + 25 + sag, x1: centerX + 105, y1: centerY + 50 + sag },
+      { x0: centerX - 95, y0: centerY + 55 + sag, cp1x: centerX - 30, cp1y: centerY + 85 + sag, cp2x: centerX + 40, cp2y: centerY + 45 + sag, x1: centerX + 90, y1: centerY + 68 + sag },
+      // Cross weave strands
+      { x0: centerX - 65, y0: centerY - 110 + sag, cp1x: centerX - 90, cp1y: centerY - 20 + sag, cp2x: centerX - 40, cp2y: centerY + 70 + sag, x1: centerX - 60, y1: centerY + 110 + sag },
+      { x0: centerX - 15, y0: centerY - 120 + sag, cp1x: centerX - 45, cp1y: centerY - 10 + sag, cp2x: centerX + 15, cp2y: centerY + 80 + sag, x1: centerX - 10, y1: centerY + 115 + sag },
+      { x0: centerX + 35, y0: centerY - 115 + sag, cp1x: centerX + 10, cp1y: centerY - 15 + sag, cp2x: centerX + 60, cp2y: centerY + 70 + sag, x1: centerX + 40, y1: centerY + 110 + sag },
+      { x0: centerX + 75, y0: centerY - 95 + sag, cp1x: centerX + 50, cp1y: centerY - 5 + sag, cp2x: centerX + 90, cp2y: centerY + 60 + sag, x1: centerX + 70, y1: centerY + 95 + sag },
+    ];
 
-  // Draw shadow first
-  ctx.lineWidth = noodleWidth;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = noodleShadowColor;
-  for (const n of noodleCurves) {
-    ctx.beginPath();
-    ctx.moveTo(n.x0, n.y0 + 2);
-    ctx.bezierCurveTo(n.cp1x, n.cp1y + 2, n.cp2x, n.cp2y + 2, n.x1, n.y1 + 2);
-    ctx.stroke();
-  }
+    ctx.lineWidth = nWidth;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = isJjajang ? '#3E2723' : '#FDE047';
+    for (const c of thinCurves) {
+      ctx.beginPath();
+      ctx.moveTo(c.x0, c.y0 + 2);
+      ctx.bezierCurveTo(c.cp1x, c.cp1y + 2, c.cp2x, c.cp2y + 2, c.x1, c.y1 + 2);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = isJjajang ? '#5D4037' : '#FEF9C3';
+    for (const c of thinCurves) {
+      ctx.beginPath();
+      ctx.moveTo(c.x0, c.y0);
+      ctx.bezierCurveTo(c.cp1x, c.cp1y, c.cp2x, c.cp2y, c.x1, c.y1);
+      ctx.stroke();
+    }
+  } else if (noodleType === 'chewy') {
+    // [쫄깃면] 진한 노란색, 조금 굵고 탱탱해 보이는 큰 웨이브 + 윤기(하이라이트 선)
+    const nWidth = isSoft ? 13.5 : isFirm ? 8.0 : 10.0;
+    const chewyCurves: NoodleCurve[] = [
+      { x0: centerX - 110, y0: centerY - 50 + sag, cp1x: centerX - 60, cp1y: centerY - 95 + sag, cp2x: centerX + 40, cp2y: centerY - 15 + sag, x1: centerX + 105, y1: centerY - 55 + sag },
+      { x0: centerX - 120, y0: centerY - 15 + sag, cp1x: centerX - 40, cp1y: centerY + 30 + sag, cp2x: centerX + 50, cp2y: centerY - 55 + sag, x1: centerX + 115, y1: centerY - 10 + sag },
+      { x0: centerX - 115, y0: centerY + 25 + sag, cp1x: centerX - 55, cp1y: centerY + 70 + sag, cp2x: centerX + 45, cp2y: centerY - 10 + sag, x1: centerX + 110, y1: centerY + 35 + sag },
+      { x0: centerX - 95, y0: centerY + 65 + sag, cp1x: centerX - 35, cp1y: centerY + 105 + sag, cp2x: centerX + 60, cp2y: centerY + 35 + sag, x1: centerX + 90, y1: centerY + 75 + sag },
+      { x0: centerX - 30, y0: centerY - 110 + sag, cp1x: centerX - 75, cp1y: centerY - 15 + sag, cp2x: centerX + 15, cp2y: centerY + 75 + sag, x1: centerX - 25, y1: centerY + 110 + sag },
+    ];
 
-  // Draw noodle core
-  ctx.strokeStyle = noodleMainColor;
-  for (const n of noodleCurves) {
-    ctx.beginPath();
-    ctx.moveTo(n.x0, n.y0);
-    ctx.bezierCurveTo(n.cp1x, n.cp1y, n.cp2x, n.cp2y, n.x1, n.y1);
-    ctx.stroke();
+    // Under-shadow
+    ctx.lineWidth = nWidth + 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = isJjajang ? '#1F0C02' : '#B45309';
+    for (const c of chewyCurves) {
+      ctx.beginPath();
+      ctx.moveTo(c.x0, c.y0 + 3);
+      ctx.bezierCurveTo(c.cp1x, c.cp1y + 3, c.cp2x, c.cp2y + 3, c.x1, c.y1 + 3);
+      ctx.stroke();
+    }
+
+    // Main Golden bouncy core
+    ctx.lineWidth = nWidth;
+    ctx.strokeStyle = isJjajang ? '#3E2723' : '#F59E0B';
+    for (const c of chewyCurves) {
+      ctx.beginPath();
+      ctx.moveTo(c.x0, c.y0);
+      ctx.bezierCurveTo(c.cp1x, c.cp1y, c.cp2x, c.cp2y, c.x1, c.y1);
+      ctx.stroke();
+    }
+
+    // High-gloss highlight stroke (윤기)
+    ctx.lineWidth = nWidth * 0.32;
+    ctx.strokeStyle = isJjajang ? '#6D4C41' : '#FEF9C3';
+    for (const c of chewyCurves) {
+      ctx.beginPath();
+      ctx.moveTo(c.x0, c.y0 - 2);
+      ctx.bezierCurveTo(c.cp1x, c.cp1y - 2, c.cp2x, c.cp2y - 2, c.x1, c.y1 - 2);
+      ctx.stroke();
+    }
+  } else if (noodleType === 'flat') {
+    // [넓적면] 납작하고 넓은 리본 모양, 완만한 웨이브
+    const ribbonW = isSoft ? 29.0 : isFirm ? 18.0 : 23.0;
+    const flatRibbons: NoodleCurve[] = [
+      { x0: centerX - 115, y0: centerY - 55 + sag, cp1x: centerX - 35, cp1y: centerY - 80 + sag, cp2x: centerX + 45, cp2y: centerY - 35 + sag, x1: centerX + 110, y1: centerY - 45 + sag },
+      { x0: centerX - 120, y0: centerY - 5 + sag, cp1x: centerX - 40, cp1y: centerY + 25 + sag, cp2x: centerX + 40, cp2y: centerY - 25 + sag, x1: centerX + 115, y1: centerY + 5 + sag },
+      { x0: centerX - 110, y0: centerY + 45 + sag, cp1x: centerX - 30, cp1y: centerY + 75 + sag, cp2x: centerX + 55, cp2y: centerY + 25 + sag, x1: centerX + 105, y1: centerY + 55 + sag },
+      { x0: centerX - 45, y0: centerY - 105 + sag, cp1x: centerX - 70, cp1y: centerY - 10 + sag, cp2x: centerX + 10, cp2y: centerY + 65 + sag, x1: centerX - 25, y1: centerY + 105 + sag },
+    ];
+
+    // Ribbon border/depth
+    ctx.lineWidth = ribbonW + 2.5;
+    ctx.lineCap = 'butt';
+    ctx.strokeStyle = isJjajang ? '#27140B' : '#D97706';
+    for (const r of flatRibbons) {
+      ctx.beginPath();
+      ctx.moveTo(r.x0, r.y0 + 2);
+      ctx.bezierCurveTo(r.cp1x, r.cp1y + 2, r.cp2x, r.cp2y + 2, r.x1, r.y1 + 2);
+      ctx.stroke();
+    }
+
+    // Ribbon Body
+    ctx.lineWidth = ribbonW;
+    ctx.strokeStyle = isJjajang ? '#4E342E' : '#FDE68A';
+    for (const r of flatRibbons) {
+      ctx.beginPath();
+      ctx.moveTo(r.x0, r.y0);
+      ctx.bezierCurveTo(r.cp1x, r.cp1y, r.cp2x, r.cp2y, r.x1, r.y1);
+      ctx.stroke();
+    }
+
+    // Ribbon surface sheen
+    ctx.lineWidth = ribbonW * 0.35;
+    ctx.strokeStyle = isJjajang ? '#6D4C41' : '#FFFBEB';
+    for (const r of flatRibbons) {
+      ctx.beginPath();
+      ctx.moveTo(r.x0, r.y0 - 2);
+      ctx.bezierCurveTo(r.cp1x, r.cp1y - 2, r.cp2x, r.cp2y - 2, r.x1, r.y1 - 2);
+      ctx.stroke();
+    }
+  } else if (noodleType === 'udon') {
+    // [우동면] 하얀색에 가까운 크림색, 아주 굵고 거의 곧은 면 몇 가닥
+    const udonW = isSoft ? 34.0 : isFirm ? 22.0 : 27.0;
+    const udonStrands: NoodleCurve[] = [
+      { x0: centerX - 110, y0: centerY - 48 + sag, cp1x: centerX - 35, cp1y: centerY - 62 + sag, cp2x: centerX + 45, cp2y: centerY - 38 + sag, x1: centerX + 105, y1: centerY - 50 + sag },
+      { x0: centerX - 115, y0: centerY - 5 + sag, cp1x: centerX - 40, cp1y: centerY + 10 + sag, cp2x: centerX + 45, cp2y: centerY - 15 + sag, x1: centerX + 115, y1: centerY + 2 + sag },
+      { x0: centerX - 110, y0: centerY + 42 + sag, cp1x: centerX - 30, cp1y: centerY + 58 + sag, cp2x: centerX + 50, cp2y: centerY + 30 + sag, x1: centerX + 105, y1: centerY + 48 + sag },
+      { x0: centerX - 35, y0: centerY - 105 + sag, cp1x: centerX - 55, cp1y: centerY - 10 + sag, cp2x: centerX + 15, cp2y: centerY + 65 + sag, x1: centerX - 15, y1: centerY + 105 + sag },
+    ];
+
+    // Shadow border
+    ctx.lineWidth = udonW + 3;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = isJjajang ? '#1F0C02' : '#FDE68A';
+    for (const u of udonStrands) {
+      ctx.beginPath();
+      ctx.moveTo(u.x0, u.y0 + 3);
+      ctx.bezierCurveTo(u.cp1x, u.cp1y + 3, u.cp2x, u.cp2y + 3, u.x1, u.y1 + 3);
+      ctx.stroke();
+    }
+
+    // Plump cream cylinder
+    ctx.lineWidth = udonW;
+    ctx.strokeStyle = isJjajang ? '#451A03' : '#FFFBEB';
+    for (const u of udonStrands) {
+      ctx.beginPath();
+      ctx.moveTo(u.x0, u.y0);
+      ctx.bezierCurveTo(u.cp1x, u.cp1y, u.cp2x, u.cp2y, u.x1, u.y1);
+      ctx.stroke();
+    }
+
+    // Specular cylindrical highlight
+    ctx.lineWidth = udonW * 0.35;
+    ctx.strokeStyle = isJjajang ? '#78350F' : '#FFFFFF';
+    for (const u of udonStrands) {
+      ctx.beginPath();
+      ctx.moveTo(u.x0, u.y0 - 2);
+      ctx.bezierCurveTo(u.cp1x, u.cp1y - 2, u.cp2x, u.cp2y - 2, u.x1, u.y1 - 2);
+      ctx.stroke();
+    }
+  } else {
+    // [기본면] 노란색, 보통 굵기의 꼬불꼬불한 곡선
+    const noodleWidth = isSoft ? 9.5 : isFirm ? 5.5 : 7.0;
+    const noodleCurves: NoodleCurve[] = [
+      { x0: centerX - 80, y0: centerY - 45 + sag, cp1x: centerX - 50, cp1y: centerY - 70 + sag, cp2x: centerX + 20, cp2y: centerY - 20 + sag, x1: centerX + 75, y1: centerY - 40 + sag },
+      { x0: centerX - 90, y0: centerY - 15 + sag, cp1x: centerX - 30, cp1y: centerY + 10 + sag, cp2x: centerX + 40, cp2y: centerY - 45 + sag, x1: centerX + 85, y1: centerY - 10 + sag },
+      { x0: centerX - 75, y0: centerY + 15 + sag, cp1x: centerX - 40, cp1y: centerY + 45 + sag, cp2x: centerX + 30, cp2y: centerY - 10 + sag, x1: centerX + 80, y1: centerY + 25 + sag },
+      { x0: centerX - 60, y0: centerY + 45 + sag, cp1x: centerX - 20, cp1y: centerY + 70 + sag, cp2x: centerX + 50, cp2y: centerY + 20 + sag, x1: centerX + 70, y1: centerY + 55 + sag },
+      { x0: centerX - 35, y0: centerY - 80 + sag, cp1x: centerX - 60, cp1y: centerY - 20 + sag, cp2x: centerX - 10, cp2y: centerY + 60 + sag, x1: centerX - 40, y1: centerY + 80 + sag },
+      { x0: centerX + 30, y0: centerY - 75 + sag, cp1x: centerX + 60, cp1y: centerY - 10 + sag, cp2x: centerX + 15, cp2y: centerY + 50 + sag, x1: centerX + 35, y1: centerY + 75 + sag },
+    ];
+
+    // Shadow
+    ctx.lineWidth = noodleWidth + 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = isJjajang ? '#27140B' : '#D97706';
+    for (const n of noodleCurves) {
+      ctx.beginPath();
+      ctx.moveTo(n.x0, n.y0 + 2);
+      ctx.bezierCurveTo(n.cp1x, n.cp1y + 2, n.cp2x, n.cp2y + 2, n.x1, n.y1 + 2);
+      ctx.stroke();
+    }
+
+    // Core
+    ctx.lineWidth = noodleWidth;
+    ctx.strokeStyle = isJjajang ? '#4E342E' : '#FDE047';
+    for (const n of noodleCurves) {
+      ctx.beginPath();
+      ctx.moveTo(n.x0, n.y0);
+      ctx.bezierCurveTo(n.cp1x, n.cp1y, n.cp2x, n.cp2y, n.x1, n.y1);
+      ctx.stroke();
+    }
   }
 
   // Soup oil glistening circles

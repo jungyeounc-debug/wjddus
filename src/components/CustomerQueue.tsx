@@ -50,6 +50,15 @@ export const CustomerQueue: React.FC<CustomerQueueProps> = ({ customer }) => {
   const doneness = customer.order.noodleDoneness || customer.order.noodle || 'firm';
   const noodleLabelMap = { firm: '면 꼬들꼬들', normal: '면 보통 탱글', soft: '면 푹 퍼짐' };
 
+  const noodleTypeNames: Record<string, string> = {
+    basic: '기본면',
+    chewy: '쫄깃면',
+    thin: '얇은면',
+    flat: '넓적면',
+    udon: '우동면',
+  };
+  const noodleTypeName = noodleTypeNames[customer.order.noodleType || 'basic'] || '기본면';
+
   const patienceColor =
     patiencePercent > 50 ? 'bg-emerald-500' : patiencePercent > 25 ? 'bg-amber-500' : 'bg-red-500 animate-pulse';
 
@@ -168,12 +177,9 @@ export const CustomerQueue: React.FC<CustomerQueueProps> = ({ customer }) => {
         </div>
 
         <div className="bg-white rounded-xl p-2 border border-slate-200 shadow-2xs">
-          <div className="text-[10px] text-slate-500 font-bold">3. 면 익힘 & 계란</div>
-          <div className="text-xs font-bold text-amber-700 truncate">
-            {noodleLabelMap[doneness]}
-            {customer.order.eggType && customer.order.eggType !== 'none'
-              ? ` · ${customer.order.eggType === 'soft' ? '반숙' : customer.order.eggType === 'hard' ? '완숙' : '계란'}`
-              : ''}
+          <div className="text-[10px] text-slate-500 font-bold">3. 면발 종류 & 익힘</div>
+          <div className="text-xs font-bold text-amber-800 truncate">
+            {noodleTypeName} · {noodleLabelMap[doneness]}
           </div>
         </div>
 

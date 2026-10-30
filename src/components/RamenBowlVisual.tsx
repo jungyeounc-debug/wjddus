@@ -8,6 +8,7 @@ import {
   BowlCustomization,
   BrothType,
   NoodleDoneness,
+  NoodleType,
   RamenCategory,
   SpicyLevel,
   ToppingId,
@@ -18,6 +19,7 @@ import { ToppingVisual } from './ToppingVisual';
 
 interface RamenBowlVisualProps {
   ramenCategory?: RamenCategory;
+  noodleType?: NoodleType;
   waterLevel?: WaterLevel;
   broth?: BrothType;
   spicyLevel?: SpicyLevel;
@@ -32,6 +34,7 @@ interface RamenBowlVisualProps {
 
 export const RamenBowlVisual: React.FC<RamenBowlVisualProps> = ({
   ramenCategory = 'soup',
+  noodleType = 'basic',
   waterLevel = 'normal',
   broth = 'spicy',
   spicyLevel = 1,
@@ -202,44 +205,135 @@ export const RamenBowlVisual: React.FC<RamenBowlVisualProps> = ({
             </div>
           )}
 
-          {/* Wavy Noodles Representation */}
-          <svg className="absolute inset-0 w-full h-full opacity-80" viewBox="0 0 100 100">
-            {/* Noodle strand coils */}
-            <path
-              d="M25,45 Q35,35 45,45 T65,45 T80,48"
-              fill="none"
-              stroke={ramenCategory === 'jjajang' ? '#3E2723' : '#FEF08A'}
-              strokeWidth={noodle === 'soft' ? '3.5' : noodle === 'firm' ? '2.4' : '3.0'}
-              strokeLinecap="round"
-            />
-            <path
-              d="M20,55 Q35,65 50,55 T75,55 T85,58"
-              fill="none"
-              stroke={ramenCategory === 'jjajang' ? '#4E342E' : '#FDE047'}
-              strokeWidth={noodle === 'soft' ? '3.5' : noodle === 'firm' ? '2.4' : '3.0'}
-              strokeLinecap="round"
-            />
-            <path
-              d="M30,35 Q45,25 60,35 T78,38"
-              fill="none"
-              stroke={ramenCategory === 'jjajang' ? '#3E2723' : '#FACC15'}
-              strokeWidth="2.8"
-              strokeLinecap="round"
-            />
-            <path
-              d="M28,68 Q40,78 55,68 T72,70"
-              fill="none"
-              stroke={ramenCategory === 'jjajang' ? '#4E342E' : '#FEF08A'}
-              strokeWidth="2.6"
-              strokeLinecap="round"
-            />
-            <path
-              d="M38,40 Q50,50 62,40 T75,42"
-              fill="none"
-              stroke={ramenCategory === 'jjajang' ? '#271714' : '#EAB308'}
-              strokeWidth="2.2"
-              strokeLinecap="round"
-            />
+          {/* Wavy Noodles Representation: Differentiated by noodleType and doneness */}
+          <svg className="absolute inset-0 w-full h-full opacity-90 pointer-events-none" viewBox="0 0 100 100">
+            {(() => {
+              const isJjajang =
+                ramenCategory === 'jjajang' ||
+                broth === 'stir_jjajang' ||
+                broth === 'jjajang_classic' ||
+                broth === 'jjajang_truffle';
+              const isSoft = noodle === 'soft';
+              const isFirm = noodle === 'firm';
+              const sag = isSoft ? 3 : isFirm ? -1 : 0;
+
+              if (noodleType === 'thin') {
+                // 얇은면: 연한 노란색, 아주 가늘고 촘촘한 곡선을 많이
+                const sw = isSoft ? 2.5 : isFirm ? 1.3 : 1.8;
+                const c1 = isJjajang ? '#5D4037' : '#FEF9C3';
+                const c2 = isJjajang ? '#4E342E' : '#FEF08A';
+                const c3 = isJjajang ? '#3E2723' : '#FDE047';
+                return (
+                  <g>
+                    {/* Dense compact multiple fine strands */}
+                    <path d={`M20,${34 + sag} Q27,${28 + sag} 35,${35 + sag} T50,${33 + sag} T65,${36 + sag} T80,${32 + sag}`} fill="none" stroke={c1} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M18,${42 + sag} Q26,${37 + sag} 34,${44 + sag} T49,${41 + sag} T64,${43 + sag} T79,${39 + sag} T86,${43 + sag}`} fill="none" stroke={c2} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M22,${50 + sag} Q30,${44 + sag} 38,${52 + sag} T54,${49 + sag} T69,${51 + sag} T82,${48 + sag}`} fill="none" stroke={c1} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M17,${58 + sag} Q25,${53 + sag} 33,${60 + sag} T48,${57 + sag} T63,${59 + sag} T78,${56 + sag} T85,${60 + sag}`} fill="none" stroke={c3} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M24,${66 + sag} Q32,${61 + sag} 40,${67 + sag} T56,${65 + sag} T71,${67 + sag} T81,${64 + sag}`} fill="none" stroke={c2} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M28,${73 + sag} Q36,${68 + sag} 44,${74 + sag} T60,${72 + sag} T75,${74 + sag}`} fill="none" stroke={c1} strokeWidth={sw} strokeLinecap="round" />
+                    {/* Vertical weave strands */}
+                    <path d={`M32,${26 + sag} Q28,${40 + sag} 34,${55 + sag} T30,${72 + sag}`} fill="none" stroke={c2} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M50,${24 + sag} Q46,${42 + sag} 52,${58 + sag} T48,${76 + sag}`} fill="none" stroke={c1} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M68,${27 + sag} Q72,${44 + sag} 66,${60 + sag} T70,${74 + sag}`} fill="none" stroke={c3} strokeWidth={sw} strokeLinecap="round" />
+                  </g>
+                );
+              }
+
+              if (noodleType === 'chewy') {
+                // 쫄깃면: 진한 노란색, 조금 굵고 탱탱해 보이는 큰 웨이브 + 윤기(하이라이트 선)
+                const sw = isSoft ? 5.4 : isFirm ? 3.6 : 4.5;
+                const baseColor = isJjajang ? '#3E2723' : '#F59E0B';
+                const shadowColor = isJjajang ? '#27140B' : '#D97706';
+                const shineColor = isJjajang ? '#6D4C41' : '#FEF9C3';
+                return (
+                  <g>
+                    {/* Shadow underneath */}
+                    <path d={`M22,${38 + sag + 1} Q35,${24 + sag} 48,${38 + sag} T78,${36 + sag}`} fill="none" stroke={shadowColor} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M18,${52 + sag + 1} Q32,${68 + sag} 50,${52 + sag} T82,${54 + sag}`} fill="none" stroke={shadowColor} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M24,${66 + sag + 1} Q38,${80 + sag} 55,${66 + sag} T76,${68 + sag}`} fill="none" stroke={shadowColor} strokeWidth={sw} strokeLinecap="round" />
+
+                    {/* Main bouncy curves */}
+                    <path d={`M22,${38 + sag} Q35,${24 + sag} 48,${38 + sag} T78,${36 + sag}`} fill="none" stroke={baseColor} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M18,${52 + sag} Q32,${68 + sag} 50,${52 + sag} T82,${54 + sag}`} fill="none" stroke={baseColor} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M24,${66 + sag} Q38,${80 + sag} 55,${66 + sag} T76,${68 + sag}`} fill="none" stroke={baseColor} strokeWidth={sw} strokeLinecap="round" />
+                    <path d={`M34,${28 + sag} Q48,${42 + sag} 64,${28 + sag} T82,${40 + sag}`} fill="none" stroke={baseColor} strokeWidth={sw * 0.9} strokeLinecap="round" />
+
+                    {/* High gloss bounce highlight line (윤기) */}
+                    <path d={`M25,${36 + sag} Q35,${25 + sag} 45,${36 + sag} T75,${35 + sag}`} fill="none" stroke={shineColor} strokeWidth={sw * 0.32} strokeLinecap="round" />
+                    <path d={`M22,${50 + sag} Q33,${64 + sag} 48,${50 + sag} T79,${52 + sag}`} fill="none" stroke={shineColor} strokeWidth={sw * 0.32} strokeLinecap="round" />
+                    <path d={`M28,${64 + sag} Q39,${76 + sag} 53,${64 + sag} T73,${66 + sag}`} fill="none" stroke={shineColor} strokeWidth={sw * 0.32} strokeLinecap="round" />
+                  </g>
+                );
+              }
+
+              if (noodleType === 'flat') {
+                // 넓적면: 납작하고 넓은 리본 모양, 완만한 웨이브
+                const ribbonW = isSoft ? 13.5 : isFirm ? 8.5 : 10.5;
+                const rBody = isJjajang ? '#4E342E' : '#FDE68A';
+                const rEdge = isJjajang ? '#27140B' : '#D97706';
+                const rShine = isJjajang ? '#6D4C41' : '#FFFBEB';
+                return (
+                  <g>
+                    {/* Ribbon 1 */}
+                    <path d={`M20,${34 + sag} Q45,${26 + sag} 80,${38 + sag}`} fill="none" stroke={rEdge} strokeWidth={ribbonW + 1.2} strokeLinecap="square" />
+                    <path d={`M20,${34 + sag} Q45,${26 + sag} 80,${38 + sag}`} fill="none" stroke={rBody} strokeWidth={ribbonW} strokeLinecap="square" />
+                    <path d={`M22,${33 + sag} Q45,${25 + sag} 78,${37 + sag}`} fill="none" stroke={rShine} strokeWidth={ribbonW * 0.35} strokeLinecap="square" />
+
+                    {/* Ribbon 2 (diagonal cross) */}
+                    <path d={`M18,${52 + sag} Q48,${62 + sag} 82,${48 + sag}`} fill="none" stroke={rEdge} strokeWidth={ribbonW + 1.2} strokeLinecap="square" />
+                    <path d={`M18,${52 + sag} Q48,${62 + sag} 82,${48 + sag}`} fill="none" stroke={rBody} strokeWidth={ribbonW} strokeLinecap="square" />
+                    <path d={`M20,${51 + sag} Q48,${61 + sag} 80,${47 + sag}`} fill="none" stroke={rShine} strokeWidth={ribbonW * 0.35} strokeLinecap="square" />
+
+                    {/* Ribbon 3 */}
+                    <path d={`M26,${68 + sag} Q52,${74 + sag} 76,${64 + sag}`} fill="none" stroke={rEdge} strokeWidth={ribbonW + 1.2} strokeLinecap="square" />
+                    <path d={`M26,${68 + sag} Q52,${74 + sag} 76,${64 + sag}`} fill="none" stroke={rBody} strokeWidth={ribbonW} strokeLinecap="square" />
+                    <path d={`M28,${67 + sag} Q52,${73 + sag} 74,${63 + sag}`} fill="none" stroke={rShine} strokeWidth={ribbonW * 0.35} strokeLinecap="square" />
+                  </g>
+                );
+              }
+
+              if (noodleType === 'udon') {
+                // 우동면: 하얀색에 가까운 크림색, 아주 굵고 거의 곧은 면 몇 가닥
+                const udonW = isSoft ? 15.5 : isFirm ? 10.0 : 12.5;
+                const uBody = isJjajang ? '#451A03' : '#FFFBEB';
+                const uShadow = isJjajang ? '#1F0C02' : '#FDE68A';
+                const uHighlight = isJjajang ? '#78350F' : '#FFFFFF';
+                return (
+                  <g>
+                    {/* Strand 1 */}
+                    <path d={`M22,${36 + sag} C40,${30 + sag} 60,${40 + sag} 78,${34 + sag}`} fill="none" stroke={uShadow} strokeWidth={udonW + 1.5} strokeLinecap="round" />
+                    <path d={`M22,${36 + sag} C40,${30 + sag} 60,${40 + sag} 78,${34 + sag}`} fill="none" stroke={uBody} strokeWidth={udonW} strokeLinecap="round" />
+                    <path d={`M23,${34 + sag} C40,${28 + sag} 60,${38 + sag} 77,${32 + sag}`} fill="none" stroke={uHighlight} strokeWidth={udonW * 0.35} strokeLinecap="round" />
+
+                    {/* Strand 2 */}
+                    <path d={`M20,${52 + sag} C42,${56 + sag} 62,${48 + sag} 82,${54 + sag}`} fill="none" stroke={uShadow} strokeWidth={udonW + 1.5} strokeLinecap="round" />
+                    <path d={`M20,${52 + sag} C42,${56 + sag} 62,${48 + sag} 82,${54 + sag}`} fill="none" stroke={uBody} strokeWidth={udonW} strokeLinecap="round" />
+                    <path d={`M21,${50 + sag} C42,${54 + sag} 62,${46 + sag} 81,${52 + sag}`} fill="none" stroke={uHighlight} strokeWidth={udonW * 0.35} strokeLinecap="round" />
+
+                    {/* Strand 3 */}
+                    <path d={`M25,${68 + sag} C45,${72 + sag} 65,${66 + sag} 76,${70 + sag}`} fill="none" stroke={uShadow} strokeWidth={udonW + 1.5} strokeLinecap="round" />
+                    <path d={`M25,${68 + sag} C45,${72 + sag} 65,${66 + sag} 76,${70 + sag}`} fill="none" stroke={uBody} strokeWidth={udonW} strokeLinecap="round" />
+                    <path d={`M26,${66 + sag} C45,${70 + sag} 65,${64 + sag} 75,${68 + sag}`} fill="none" stroke={uHighlight} strokeWidth={udonW * 0.35} strokeLinecap="round" />
+                  </g>
+                );
+              }
+
+              // 기본면 (basic): 노란색, 보통 굵기의 꼬불꼬불한 곡선
+              const sw = isSoft ? 4.2 : isFirm ? 2.4 : 3.0;
+              const b1 = isJjajang ? '#4E342E' : '#FEF08A';
+              const b2 = isJjajang ? '#3E2723' : '#FDE047';
+              const b3 = isJjajang ? '#271714' : '#EAB308';
+              return (
+                <g>
+                  <path d={`M25,${45 + sag} Q35,${35 + sag} 45,${45 + sag} T65,${45 + sag} T80,${48 + sag}`} fill="none" stroke={b1} strokeWidth={sw} strokeLinecap="round" />
+                  <path d={`M20,${55 + sag} Q35,${65 + sag} 50,${55 + sag} T75,${55 + sag} T85,${58 + sag}`} fill="none" stroke={b2} strokeWidth={sw} strokeLinecap="round" />
+                  <path d={`M30,${35 + sag} Q45,${25 + sag} 60,${35 + sag} T78,${38 + sag}`} fill="none" stroke={b3} strokeWidth={sw * 0.9} strokeLinecap="round" />
+                  <path d={`M28,${68 + sag} Q40,${78 + sag} 55,${68 + sag} T72,${70 + sag}`} fill="none" stroke={b1} strokeWidth={sw * 0.85} strokeLinecap="round" />
+                  <path d={`M38,${40 + sag} Q50,${50 + sag} 62,${40 + sag} T75,${42 + sag}`} fill="none" stroke={b2} strokeWidth={sw * 0.8} strokeLinecap="round" />
+                </g>
+              );
+            })()}
           </svg>
 
           {/* Red Chili Pepper Flakes if spicy level > 0 */}
