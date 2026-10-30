@@ -125,17 +125,25 @@ export const AlbumModal: React.FC<AlbumModalProps> = ({
                   </button>
 
                   {/* Ramen visual thumbnail */}
-                  <div className="w-full aspect-square bg-amber-50 rounded-xl flex items-center justify-center p-2 mb-2 border border-amber-100">
-                    <RamenBowlVisual
-                      ramenCategory={card.ramen.ramenCategory}
-                      waterLevel={card.ramen.waterLevel}
-                      broth={card.ramen.broth}
-                      noodle={card.ramen.noodle}
-                      toppings={card.ramen.toppings}
-                      bowlSkinId={card.ramen.bowlSkinId}
-                      size="sm"
-                      showSteam={false}
-                    />
+                  <div className="w-full aspect-square bg-amber-50 rounded-xl flex items-center justify-center p-1.5 mb-2 border border-amber-100 overflow-hidden">
+                    {card.imageDataUrl ? (
+                      <img
+                        src={card.imageDataUrl}
+                        alt={card.title}
+                        className="w-full h-full object-contain rounded-lg shadow-2xs hover:scale-105 transition-transform"
+                      />
+                    ) : (
+                      <RamenBowlVisual
+                        ramenCategory={card.ramen.ramenCategory}
+                        waterLevel={card.ramen.waterLevel}
+                        broth={card.ramen.broth}
+                        noodle={card.ramen.noodle}
+                        toppings={card.ramen.toppings}
+                        bowlSkinId={card.ramen.bowlSkinId}
+                        size="sm"
+                        showSteam={false}
+                      />
+                    )}
                   </div>
 
                   {/* Card Title */}

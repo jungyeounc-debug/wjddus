@@ -320,7 +320,7 @@ export default function App() {
       customerComment: lastRating.rating.feedback,
       customerEmoji: lastRating.customer.emoji,
       playerName: profile.name,
-      borderColor: '#F59E0B',
+      borderColor: lastRating.ramen.bowl?.color === 'pink' ? '#EC4899' : lastRating.ramen.bowl?.color === 'mint' ? '#10B981' : lastRating.ramen.bowl?.color === 'red' ? '#EF4444' : '#F59E0B',
       createdAt: new Date().toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -352,8 +352,11 @@ export default function App() {
       title: ramen.title,
       mode: 'custom',
       ramen,
+      customerName: '나만의 라면 시식단',
+      customerComment: '내가 원하던 바로 그 맛! 토핑과 국물의 조합이 환상적입니다.',
+      customerEmoji: '😋',
       playerName: profile.name,
-      borderColor: '#3B82F6',
+      borderColor: ramen.bowl?.color === 'pink' ? '#EC4899' : ramen.bowl?.color === 'mint' ? '#10B981' : ramen.bowl?.color === 'red' ? '#EF4444' : '#3B82F6',
       createdAt: new Date().toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -361,7 +364,7 @@ export default function App() {
       }),
       dayNumber: day,
       cheolwoongSignature: '철웅 사장님',
-      cheolwoongComment: '세상에 단 하나뿐인 나만의 특제 라면!',
+      cheolwoongComment: '세상에 단 하나뿐인 나만의 특제 라면! 이런 참신한 조합은 나도 한 수 배워야겠어!',
     };
 
     GameStorage.saveAlbumCard(newCard);

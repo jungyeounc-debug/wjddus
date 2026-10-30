@@ -240,6 +240,7 @@ export interface PhotoCard {
   dayNumber: number;
   cheolwoongSignature: string;
   cheolwoongComment: string;
+  imageDataUrl?: string; // Compressed JPEG (quality 0.8) saved in album to prevent quota issues
 }
 
 export type DailyWeather = 'sunny' | 'rainy' | 'hot' | 'festival' | 'birthday';
